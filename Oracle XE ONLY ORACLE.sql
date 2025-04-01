@@ -295,6 +295,11 @@ INTERSECT
 select * from plantilla where funcion='ENFERMERA';
 
 
+--concepto y creacion de tablas
+
+
+
+
 
 
 
