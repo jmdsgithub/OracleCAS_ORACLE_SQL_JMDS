@@ -662,3 +662,164 @@ insert into enfermo VALUES
 select * from enfermo;
 
 rollback;
+
+--eliminamos las dos restricciones anteriores
+
+alter table enfermo
+drop constraint pk_enfermo;
+
+alter table enfermo
+drop constraint u_enfermo_nss;
+
+--crear primary key de dos columnas
+
+alter table enfermo
+add constraint pk_enfermo
+primary key (inscripcion, nss);
+
+--intentamos insertar un registro con mismo inscripción y nss >>> y no se puede
+
+insert into enfermo VALUES
+(10995, 'Nuevo', 'Calle nueva', '01/01/2000', 'F', 280862482);
+
+--lo intentamos con otra inscripción y sí lo permite
+
+insert into enfermo VALUES
+(88999, 'Nuevo', 'Calle nueva', '01/01/2000', 'F', 280862482);
+
+--la foreighn key apunta a la tabla donde hay "muchos"
+--ej de un empleado (tabla emp) a un departamento (tabla dept) (donde hay muchos empleados)
+--apunta a departamento
+
+--otro ej: de clientes apunta a pedidos
+
+alter table dept
+add constraint pk_dept
+primary key (dept_no);
+
+insert into dept values (10, 'CONTABILIDAD', 'ELCHE');
+
+--hacemos la restricción
+alter table emp
+add constraint fk_emp_dept
+foreign key (dept_no)
+references dept (dept_no);
+
+--para comprobarlo insertamos un empleado en un departamento que no existe
+
+insert into emp values (111, 'nuevo', 'empleado', 7902, '02/04/2025', 1, 1, 50);
+
+insert into emp values (111, 'nulo', 'empleado', 7902, '02/04/2025', 1, 1, null);
+
+select * from emp;
+select * from dept;
+
+--acepta nulos, por eso se deben impedir los nulos cuando se estructura la tabla
+
+rollback;
+
+--NO HACERLO; NO HACERLO; NO HACERLO
+
+--vamos a probar la eliminación en cascada
+
+delete from dept where dept_no=10;
+
+alter table emp
+add constraint fk_emp_dept
+foreign key (dept_no)
+references dept (dept_no)
+on delete cascade;
+
+alter table emp
+drop constraint fk_emp_dept;
+
+rollback;
+
+
+03/04/2025
+------******SECUENCIAS******
+
+create sequence seq_dept
+increment by 10
+start with 40;
+
+drop sequence seq_dept;
+
+--una secuencia no se pueden alterar, solo eliminar y volvewr a crear
+
+select seq_dept.nextval as siguiente from dual;
+
+--no podemos acceder a currval hasta que no hayamos ejecutado nextval
+
+select seq_dept.nextval as actual from dual;
+
+--si lo queremos para insert debemos llamarlo de forma explícita
+
+insert into dept values (seq_dept.nextval, 'nuevo', 'nuevo');
+
+select * from dept order by 1;
+
+--otro ejemplo
+create sequence seq_test
+increment by 11
+start with 121;
+
+drop sequence seq_test;
+
+select seq_test.nextval as siguiente from dual;
+select seq_test.currval as actual from dual;
+
+--el primer valor de la secuencia será SIEMPRE el de start with
+
+--OJO, una secuencia se puede insertar en múltiples tablas, pero,
+--como no se puede modificar, insertará siempre el next elemento
+
+----------------------------------
+--------ejercicio
+---incluir en la base de datos:
+
+--1.- incluir clave primaria en hospital
+
+alter table hospital
+add constraint pk_hospital
+primary key (hospital_cod);
+
+select * from hospital;
+
+select * from user_constraints order by 4;
+
+--2.- incluir clave prmaria en doctor
+
+alter table doctor
+add constraint pk_doctor
+primary key (doctor_no);
+
+select * from doctor;
+
+--3.- relacionar doctores con hospitales
+
+alter table doctor
+add constraint fk_doctor_hospital
+foreign key (hospital_cod)
+references hospital (hospital_cod);
+
+--4.- las personas de la plantilla solamente pueden trabajar en turnos 
+--mañana, tarde o noche (M, T, N)
+
+alter table plantilla
+add constraint chk_plantilla_turno
+check (turno in ('M', 'T', 'N'));
+
+alter table plantilla
+drop constraint chk_plantilla_turno;
+
+select * from plantilla;
+
+
+
+
+
+
+
+
+
