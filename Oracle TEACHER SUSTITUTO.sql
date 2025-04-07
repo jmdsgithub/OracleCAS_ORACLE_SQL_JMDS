@@ -116,7 +116,7 @@ WHERE  owner <>'system';
 SELECT column_name, data_type, data_length, 
 data_precision PRECISION, data_scale SCALE, nullable 
 FROM   user_tab_columns 
-WHERE  table_name = UPPER('EMP');
+WHERE  table_name = UPPER('EMPLOYEES');
 
 --4. Create a script that reports the column name, constraint name, constraint type, search 
 --condition, and status for a specified table. You must join the USER_CONSTRAINTS and 
