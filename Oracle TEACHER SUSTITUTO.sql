@@ -128,8 +128,106 @@ uc.search_condition, uc.status
 FROM   user_constraints uc JOIN user_cons_columns ucc 
 ON     uc.table_name = ucc.table_name 
 AND    uc.constraint_name = ucc.constraint_name 
-AND    uc.table_name = UPPER('EMPLOYEES');  
+AND    uc.table_name = UPPER('EMPLOYEES');
 
+--5. Add a comment to the DEPARTMENTS table. Then query the USER_TAB_COMMENTS view to 
+--verify that the comment is present.
+
+COMMENT ON TABLE departments IS  
+'Company department information including name, code, and 
+location.';
+
+SELECT COMMENTS  
+FROM   user_tab_comments 
+WHERE  table_name = 'DEPARTMENTS';
+
+
+--6. Run the lab_12_06_tab.sql script as a prerequisite for exercises 6 through 9. 
+--Alternatively, open the script file to copy the code and paste it into your SQL Worksheet. 
+--Then execute the script. This script: 
+--Drops the DEPT2 and EMP2 tables 
+--Creates the DEPT2 and EMP2 tables
+
+
+--FALTA CREAR LA TABLA
+
+
+
+--7. Confirm that both the DEPT2 and EMP2 tables are stored in the data dictionary.
+
+SELECT   table_name 
+FROM     user_tables 
+WHERE    table_name IN ('DEPT2', 'EMP2');
+
+--8. Confirm that the constraints were added, by querying the USER_CONSTRAINTS view. Note 
+--the types and names of the constraints.
+
+SELECT   constraint_name, constraint_type 
+FROM     user_constraints 
+WHERE    table_name IN ('EMP2', 'DEPT2'); 
+
+--Display the object names and types from the USER_OBJECTS data dictionary view for the 
+--EMP2 and DEPT2 tables. 
+
+SELECT   object_name, object_type 
+FROM     user_objects 
+WHERE    object_name= 'EMP2' 
+OR       object_name= 'DEPT2';
+
+
+
+
+
+--******tema 13********
+
+--contadores
+
+select * from u00_ora21.e;
+
+select * from user_sequences;
+
+select * departments_seq curval from dual;
+
+select * from td;
+
+
+--*************
+
+--sinónimos
+
+select * from user_synonyms;
+
+select * from all_synonyms where synonym_name like '%DUAL%';
+
+select * from sys.dual;
+
+
+--********INDICES*******
+
+
+
+
+
+--ROWID
+
+/*
+
+TABLESPACE
+DATAFILES
+SEGMENTS   >>>>> el nombre de espacio que ocupa un objeto
+EXTENTS   >>>> conjunto de blopques continuos en un data file
+BLOCK   >>>mínima unidad de almacenamiento
+
+*/
+
+SELECT * FROM USER_TABLES;
+
+
+
+
+--row id no existe en la tabla, se genera en tiempo de consuulta
+--ROW ID: primeros 15 caracteres-> data file y número de bloque
+--posición de la fila dentro del bloque
 
 
 
