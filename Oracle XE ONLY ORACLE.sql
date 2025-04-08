@@ -1088,7 +1088,7 @@ select apellido, decode(TURNO, 'M', 'MAÑANA', 'N', 'NOCHE', 'TARDE') as turno f
 
 --FUNCIONES ANIDADAS
  
---ejemplo, se quiere saber la fecha del próximommiercoles que juega el madrid
+--ejemplo, se quiere saber la fecha del próximommiercoles que juega el Madrid
 
 select next_day(sysdate, 'wednesday') as champions from dual;
 --2025-04-09T18:22:30
