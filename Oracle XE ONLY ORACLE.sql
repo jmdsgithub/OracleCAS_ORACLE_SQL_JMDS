@@ -818,8 +818,285 @@ select * from plantilla;
 
 
 
+--****martes 08/04/2025*******
+
+--FUNCIONES DE STRING.... funciones de cadena
+
+select * from emp where lower(oficio)='analista';
+
+update emp set oficio='analiSTA' where emp_no=7902;
+
+--estamos poniendo valores estáticos: 'analista'
+--también podríamos iincluir cvalores dinámicos, por lo que tendriámos que
+--cpnvertr las dos comparaciones
+select * from emp where upper(oficio)=upper('&dato');
+
+--en oracle tenemos la posibilida de concatenar textos en 
+--una sola columna (campo calculado)
+--se utiliza el símbolo || para concatenar
+--queremos mostrar ejn una sola columna el apellido y oficio de los empleados 
+
+select apellido|| oficio as descripcion from emp;
+
+select apellido|| '  ' || oficio as descripcion from emp;
+
+--la funcion initcap muestra cada palabra de una frase con la primera letra en mayúsculas
+
+select INITCAP (oficio) as INICT from emp;
+
+select initcap(apellido|| '  ' || oficio) as descripcion from emp;
+
+select concat('Nuestro empleado es: ', apellido) as resultado from emp;
+
+--SUBSTR..... sub string.... SUB CADENA...
+
+SELECT SUBSTR('FLORERO', 1, 4)AS DATO FROM DUAL;
+
+SELECT SUBSTR('FLORERO', 2, 4)AS DATO FROM DUAL;
+
+SELECT SUBSTR('FLORERO', 4)AS DATO FROM DUAL;
+
+SELECT SUBSTR('FLORERO', 2, 40)AS DATO FROM DUAL;
+
+--mostrar los empleados cuyos apellidos comienzan con S
+
+select * from emp where apellido like 's%';
+
+select substr (apellido, 1, 1) as UNAletra from emp;
+
+select * from emp where substr(apellido, 1, 1)='s';
+
+--es más eficiente usar la linea substr que like
+
+--length devuelve el número de posiciones de una expresion
+
+select length('libro') as longitud from dual;
+
+--mostar los empleados cuyo apellido sea de 4 letras
+
+select * from emp where apellido like '____';
+
+select * from emp where length(apellido)=4;
+
+--instr permite buscar un texto dentro de una cadena de caracteres y devuelve su posición....
+
+select instr ('benito', 'n') as posicion from dual;
+
+select instr ('benito', 'nip') as posicion from dual;
+--si devuelve CER es que no la encuentra
+
+select instr ('oracle mola', 'l') as posicion from dual;
+--si hay dos sólo devuelve la primera que encuentra
+
+select instr ('oracle mola', 'm') as posicion from dual;
+--el espacio lo cuenta como un caracter
+
+--si, por ejemplo, deseamos validar un mail
+select * from dual where instr ('m@ail', '@') >0;
+
+--L o R PAD incluye caracteres
+select lpad (dept_no, 5, '$') from emp;
+
+select rpad (dept_no, 5, '$') from emp;
 
 
+--FUNCIONES NUMÉRICAS
+
+--round
+
+select round(45.923548) as redondeo from dual;
+--46
+
+select round(45.323548) as redondeo from dual;
+--45
+
+--indicando 2 decimadles
+
+select round(45.923548, 2) as redondeo from dual;
+--45.92
+
+select round(45.929548, 2) as redondeo from dual;
+--45.93
+
+--TRUNC (corta, pero no redondea)
+
+select trunc(45.923548) as redondeo from dual;
+--45
+
+select trunc(45.323548) as redondeo from dual;
+--45
+
+select trunc(45.923548, 2) as redondeo from dual;
+--45.92
+
+select trunc(45.929548, 2) as redondeo from dual;
+--45.92
+
+--MOD(n,m)
+--devuelve el resto de la división ebntre dos números
+--averiguar si número es par
+select mod(99,2)as resto from dual;
+--1, 99 no es divisible entre dos, por lo que su restop es 1
+
+select mod(8,2)as resto from dual;
+--0, 8 sí es divisible entre dos, por lo que su resto es 1
+
+--empleados copn salario par
+select * from emp where mod(salario, 2)=0;
+-- son todos pares
+
+--incluimos números impares
+update emp set salario = salario + 1 where dept_no=20;
+
+select * from emp where mod(salario, 2)=0;
+--9 impares
+
+--FUNCIONES DE FECHAS
+
+--TENEMOS UNA FUNCION PARA AVERIGUR LA FECHA DEL SERVIDOR
+
+--SYSDATE
+
+select sysdate as fecha_actual from dual;
+
+--opera con fechas
+
+select sysdate + 10 as fecha from dual;
+
+select sysdate + 30 as fecha from dual;
+
+select sysdate + 365 as fecha from dual;
+
+select sysdate -365 as fecha from dual;
+
+--months_between
+--mostar cuantos meses llevan los empleados dados de alta en la empresa
+
+select apellido, months_between(sysdate, fecha_alt) as meses from emp;
+
+--add_month
+--agregamos a la fecha actual 5 meses
+select add_months(sysdate, 5) as dentro5 from dual;
+
+--next_day
+--mostar cuando es el próximo .lunes
+
+select next_day(sysdate, 'monday') as proximo_lunes from dual;
+
+--last_day devuelve el último día del mes
+
+select last_day(sysdate) as fin_mes from dual;
+
+--round (fecha, formato)
+
+--empleados redondeados al mes
+select apellido, fecha_alt, round(fecha_alt, 'MM') as roundmes from emp;
+
+--redondeados al año
+select apellido, fecha_alt, round(fecha_alt, 'YYYY') as roundyear from emp;
+
+--TRUNC 
+--recorta la fecha la fecha sin redondear
+
+select apellido, fecha_alt, trunc(fecha_alt, 'MM') as truncmes from emp;
+--TODOS los trunca (redondea) a la baja
+
+select apellido, fecha_alt, trunc(fecha_alt, 'YYYY') as truncyear from emp;
+--TODOS los trunca (redondea) a la baja
+
+--FUNCIONES de CONVERSIÓN
+--conversión de fechas
+
+select apellido, fecha_alt, to_char (fecha_alt, 'mm-dd-yyyy') as formato from emp;
+
+select apellido, fecha_alt, to_char (fecha_alt, 'mm@dd@yyyy') as formato from emp;
+
+select apellido, fecha_alt, to_char (fecha_alt, 'dd*mm*yyyy') as formato from emp;
+
+select apellido, fecha_alt, to_char (fecha_alt, 'day-mm-dd-yyyy') as formato from emp;
+--thursday -11-17-2005
+
+--conversión de números
+
+select to_char(7458, '0000L') as zero from dual;
+--7458$
+
+select to_char(7458, 'L0000') as zero from dual;
+--          $7458
+
+select to_char (sysdate, 'hh24:mi:ss') as hora_sistema from dual;
+--17:45:27
+
+--si se desea incluir TEXTOS dentro de los formatos se incluyen
+-- con comllas " " dentro de las comillas ' '
+
+select to_char(sysdate, '"Hoy es " DD') as formato from dual;
+--Hoy es  08
+
+select to_char(sysdate, '"Hoy es " DD " de " month') as formato from dual;
+--Hoy es  08  de  april    
+
+select to_char(sysdate, '"Hoy es " DD " de " month', 'nls_date_languaje=french') as formato from dual;
 
 
+--funciones de conversión
+select '08/04/2025' as fecha from dual;
+--NO permite operar con fechas
 
+select to_date('08/04/2025') as fecha from dual;
+--SI permite operar con fechas
+
+select to_date('08/04/2025') + 2 as fecha from dual;
+--2025-04-10T00:00
+
+select '12' + 2 as resultado from dual;
+--NO permite operar
+
+select to_number('12') + 2 as resultado from dual;
+--SI permite operar con fechas
+
+--NVL sirve para evitar los nulos y sustituirlos
+--si encuentra un nulo, lo sustituye, sino, muestra el valor
+
+--ejemplo: mostar apellido, salario y comisión de todos los empleados
+
+select apellido, salario, comision from emp;
+
+--podemos indicar que, en lugar de poner null, escriba otro valor
+--el valor debe ser correspondiente al tipo de dato de la columna
+
+select apellido, salario, nvl(comision, -1) as comision from emp;
+
+select apellido, salario + comision as total from emp;
+--el salario de rey da NULL
+
+select apellido, salario + nvl(comision, 0) as total from emp;
+--el salario de rey da 650000
+
+
+--DECODE
+
+--mostar el turno en palabra ('mañana', 'tarde', 'noche') de la plantilla
+select apellido, turno from plantilla;
+
+--ojo, DECODE se escribe en parejas.... 
+select apellido, decode(TURNO, 'M', 'MAÑANA', 'N', 'NOCHE') as turno from plantilla;
+
+--ojo, el último, si no se nombra en par, equivale a un ELSE
+select apellido, decode(TURNO, 'M', 'MAÑANA', 'N', 'NOCHE', 'TARDE') as turno from plantilla;
+
+
+--FUNCIONES ANIDADAS
+ 
+--ejemplo, se quiere saber la fecha del próximommiercoles que juega el madrid
+
+select next_day(sysdate, 'wednesday') as champions from dual;
+--2025-04-09T18:22:30
+
+--quiero ver la fecha completa que no me entero
+
+select to_char(
+  next_day(sysdate + 2, 'wednesday'),
+  '"el dia" day dd " juega el Madrid"') as champions from dual;
+
+--el dia wednesday 16  juega el Madrid
