@@ -1100,3 +1100,10 @@ select to_char(
   '"el dia" day dd " juega el Madrid"') as champions from dual;
 
 --el dia wednesday 16  juega el Madrid
+
+--*******09/04/2025*********
+
+
+
+
+
