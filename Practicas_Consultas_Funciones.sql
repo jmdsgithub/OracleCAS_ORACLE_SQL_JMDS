@@ -36,9 +36,17 @@ ON EMP.DEPT_NO=DEPT.DEPT_NO;
 --4.- Mirar la fecha de alta del presidente. Visualizar todos los empleados dados de alta 
 --330 días antes que el presidente. 
 
-SELECT apellido, fecha_alt from emp where fecha_alt < to_date (selec fecha_alt from emp where apellido='rey')-330);
+SELECT apellido, fecha_alt from emp where fecha_alt < to_date (select fecha_alt from emp where apellido='rey')-330);
+--no funciona
 
 
+SELECT * FROM EMP WHERE
+FECHA_ALT >
+(SELECT FECHA_ALT
+-
+330 FROM EMP
+WHERE
+UPPER(OFICIO) = 'PRESIDENTE');
 
 
 
