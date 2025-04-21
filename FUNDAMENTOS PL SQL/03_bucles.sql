@@ -1,4 +1,7 @@
---vammos a mostrar la suma de los primeros 100 numeros
+
+
+
+--vamos a mostrar la suma de los primeros 100 numeros
 --1.- loop....end   lop
 
 DECLARE
@@ -165,3 +168,125 @@ end;
 
 undefine inicio;
 undefine fin;
+
+
+--queremos un bucle pidiendo un inicio y un fin
+--mostrar los numeros pares comprendidos entre dicho incio y fin
+
+declare
+    inicio int;
+    fin int;
+begin
+    inicio := &inicial;
+    fin :=&final;
+    --preguntamos por los valores de los numeros
+    for i in inicio..fin loop
+        if (MOD(i,2) = 0) then
+            dbms_output.put_line(i);
+        end if;
+    end loop;
+    dbms_output.put_line('Fin de programa');
+end;
+
+undefine inicial;
+undefine final;
+
+--CONJETURA DE COLLATZ
+--lA TEORÍA INDICA QUE CUALQUIER NÚMERO SIEMPRE LLEGARÁ A SER 1
+--SIGUIENDO UNA SERIE DE INSTRUCCIONES:
+--sI EL NUMERO ES PSAR, SE DIVIDE ENTRE 2
+--SI EL NUMERO ES IMPAR, SE SE MULTIPLICA POR 3 Y SUMAMOS 1
+--6,3,10,5,16,8,4,2,1
+
+
+declare
+    NUMERO int;
+begin
+    NUMERO := &valor;
+    WHILE NUMERO <> 1 LOOP
+        IF(mod(numero, 2)=0) then
+        numero := numero/2;
+        else
+        numero:= (numero*3)+1;
+        
+        end if;
+        dbms_output.put_line(numero);
+    end loop;
+    dbms_output.put_line('Fin de programa');
+end;
+
+undefine valor;
+
+
+--mostrar la tabla de multiplicar del número que pida el usuario que pida el usuario
+
+
+declare
+    numero int;
+    resultado int;
+begin
+    numero := &inicial;
+    resultado := 0;
+    --multiplicamos el numero por cada valor del bucle
+        for i in 1..10 loop
+        resultado := numero * i;
+        dbms_output.put_line(numero || ' * ' || i || ' = ' || resultado);
+        end loop;
+    dbms_output.put_line('Fin de programa');
+end;
+
+undefine inicial;
+
+--quiero un programa que nos pedirá un texto
+--debemos recorrer dicho texto letra a letra
+--mostramos cada letra dekl texto
+
+declare
+    v_texto varchar2(50);
+    v_longitud int;
+    v_letra varchar2 (1);
+begin
+    v_texto:= '&texto';
+    --un elemento en oracle empieza en UNO
+    --en un lugar de la mancha.... 
+    v_longitud:= length(v_texto);
+    for i in 1..v_longitud loop
+        v_letra := substr(v_texto, i, 1);
+        dbms_output.put_line(v_letra);
+    end loop;
+    dbms_output.put_line('Fin de programa');
+end;
+
+undefine texto;
+
+--necesito un programa donde un usuario introducirá un texto numérco
+--necesito mostrar la suma de todos los caracteres numéricos de un mensaje
+-- la suma de 1234 es 10
+
+declare
+    v_texto_numero varchar2(50);
+    v_longitud int;
+    v_letra varchar2 (1);
+    v_numero int;
+    v_suma int;
+begin
+    v_suma:=0;
+    v_texto_numero := &texto;
+    v_longitud:= length(v_texto_numero);
+    for i in 1..v_longitud loop
+        v_letra := substr(v_texto_numero, i, 1);
+        v_numero:= to_number(v_letra);
+        v_suma:= v_suma+v_numero;
+    end loop;
+    dbms_output.put_line('La suma de los caracteres de ' || v_texto_numero || ' es ' || v_suma);
+    dbms_output.put_line('Fin de programa');
+end;
+
+undefine texto;
+
+    
+
+
+
+
+
