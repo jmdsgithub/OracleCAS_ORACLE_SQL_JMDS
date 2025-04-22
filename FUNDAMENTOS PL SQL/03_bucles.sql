@@ -1,6 +1,5 @@
 
 
-
 --vamos a mostrar la suma de los primeros 100 numeros
 --1.- loop....end   lop
 
