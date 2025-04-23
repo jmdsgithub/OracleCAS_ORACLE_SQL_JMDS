@@ -1,6 +1,6 @@
 
 
-
+--22/04/2025
 --ejemplo de CURSORES
 
 DECLARE
@@ -219,4 +219,108 @@ select * from emp;
 
 select salario from emp where apellido = 'arroyo';
 
+----23/042025
 
+--realizar el siguiente código pl/sql
+--necesitamos modificar el salario de los doctores de la paz
+--si la suma salarial supera un millón bajamos los salarios 10.000 a este grupo
+--si la suma salarial no supera el millón, subimos los salarios en 10.000 a ewste grupo
+--mostrar el número de filas que hemos modificado (subir o bajar)
+--doctores con suerte (que ganan más): X, Doctores más pobres (que ganam menos)
+
+
+--a continuación nresuelto por mi
+select * from doctor;
+select * from hospital;
+
+select sum(salario) as suma_salarial from doctor where hospital_cod
+= (select hospital_cod from hospital where nombre='la paz');
+
+DECLARE
+    v_suma_salarial number;
+
+begin 
+    dbms_output.put_line ('Inicio de programa');
+    select sum(salario) into v_suma_salarial from doctor where hospital_cod
+    = (select hospital_cod from hospital where nombre='la paz');
+        if (V_suma_salarial < 1000000) THEN
+            update doctor set salario=salario+10000 where hospital_cod
+            = (select hospital_cod from hospital where nombre='la paz');
+            dbms_output.put_line ('Doctores modificados con suerte ' || sql%rowcount );
+        else 
+            update DOCTOR set salario=salario-10000 where hospital_cod
+            = (select hospital_cod from hospital where nombre='la paz');
+            dbms_output.put_line ('Doctores modificados más pobres ' || sql%rowcount );
+        end if;
+    dbms_output.put_line ('Final de programa');
+end;
+
+--a continuación resuelto por paco, es mejor porque usa el inner join, que es más rápido
+
+DECLARE
+    v_suma_salarial number;
+
+begin
+    select sum(doctor.salario) into v_suma_salarial 
+    from doctor
+    inner join hospital 
+    on doctor.hospital_cod = hospital.hospital_cod
+    where lower(hospital.nombre)= 'la paz';
+    if v_suma_salarial > 1000000 THEN
+        update DOCTOR set salario=salario-10000 where hospital_cod
+        = (select hospital_cod from hospital where nombre='la paz');
+        dbms_output.put_line ('Bajando salarios ' || sql%rowcount);
+    else
+        update doctor set salario=salario+10000 where hospital_cod
+        = (select hospital_cod from hospital where nombre='la paz');
+        dbms_output.put_line ('Doctores ricos ' || sql%rowcount);
+    end if;
+end;
+
+--COMO EN EL CASO ANTERIOR RECORDAR QUE, EN PL/SQL,
+--SOLO EN CONSULTAS DE ACCION (CRUD) SE PUEDEN HACER SUBCONSULTAS
+
+--otra solucón de Paco, guardando el código e hospital en una variable
+
+DECLARE
+    v_suma_salarial number;
+    v_codigo hospital.hospital_cod%type;
+    
+begin
+    select hospital_cod into v_codigo from hospital
+    where nombre='la paz';
+    select sum(doctor.salario) into v_suma_salarial 
+    from doctor
+    where hospital_cod=v_codigo;
+    if v_suma_salarial > 1000000 THEN
+        update DOCTOR set salario=salario-10000 where hospital_cod
+        = v_codigo;
+        dbms_output.put_line ('Bajando salarios ' || sql%rowcount);
+    else
+        update doctor set salario=salario+10000 where hospital_cod
+        = v_codigo;
+        dbms_output.put_line ('Doctores ricos ' || sql%rowcount);
+    end if;
+end;
+
+--ROWTYPE
+--realizamos la declaración con departamentos
+--podemos almacenar todos los departamentos (uno a uno) en un rowtype
+
+describe dept;
+
+DECLARE
+    v_fila dept%ROWTYPE;
+    cursor cursor_dept IS
+    select * from dept;
+BEGIN
+    open cursor_dept;
+    LOOP
+        fetch cursor_dept into v_fila;
+        exit when cursor_dept%notfound;
+        dbms_output.put_line('Id: ' || v_fila.dept_no
+        || ', Nombre: ' || v_fila.dnombre 
+        || ', Localidad: ' || v_fila.loc);
+    end loop;
+    close cursor_dept;
+end;
