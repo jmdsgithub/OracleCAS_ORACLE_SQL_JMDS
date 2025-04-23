@@ -324,3 +324,22 @@ BEGIN
     end loop;
     close cursor_dept;
 end;
+
+
+--realizar un cursor para mostar el apellido, salario y oficio de EMP
+
+DECLARE
+    cursor cursor_emp IS
+    select apellido, salario, oficio,
+    salario + comision as total
+    from emp;
+
+BEGIN
+    for v_registro in cursor_emp
+    LOOP
+        dbms_output.put_line('Apellido ' || v_registro.apellido
+        || ', Salario: ' || v_registro.salario
+        || ', Oficio: ' || v_registro.oficio
+        || ' Total: ' || v_registro.total);
+    end loop;
+end;
