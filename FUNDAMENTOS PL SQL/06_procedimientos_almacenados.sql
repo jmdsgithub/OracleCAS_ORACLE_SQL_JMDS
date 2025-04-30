@@ -290,6 +290,54 @@ begin
 end;
 /
 
+--COMUNICAR PROCEDIMIENTOS CON OTROS PROCEDIMIENTOS O CON OTROS LENGUAJES DE PROGRAMACIÓN
+
+
 --si usamos cursor implícito (devuelve un valor) e introduciomos un dato erróneo da error "too many rows"
 --si usamos cursor explícito no devuelve error
 
+--vamos a realizar un procedimiento para enviar el nombre
+--del departamento y devolver elnúmero de dicho departamento
+/
+create or replace procedure sp_numerodepartamento
+(p_nombre dept.dnombre%type, p_iddept out dept.dept_no%type)
+AS
+    v_iddept dept.dept_no%type;
+begin
+    select dept_no into v_iddept
+    from dept
+    where upper(dnombre)=upper(p_nombre);
+    DBMS_OUTPUT.PUT_LINE('El número de departamento es ' || v_iddept);
+end;
+/
+
+/
+begin
+    sp_numerodepartamento('ventas');
+end;
+/
+
+--necesito un procedimiento para incrementar en 1 el salario de los 
+--empleados de un departamento. 
+--Enviaremos al procedimientoel nombre del departamento
+
+/
+create or replace procedure sp_incrementar_sal_dept
+(p_nombre dept.dnombre%type)
+AS
+    v_num dept.dept_no%type;
+begin
+    --recuperamos el id del departamentoa partiir del nombre
+    SP_NUMERODEPARTAMENTO(P_NOMBRE, V_NUM);
+    update emp set salario = salario + 1
+    where dept_no=v_num;
+    DBMS_OUTPUT.PUT_LINE('Salarios modificados: ' || sql%rowcount);
+end;
+/
+
+/
+begin   sp_incrementar_sal_dept('Ventas');
+end;
+/
+
+select * from dept;
