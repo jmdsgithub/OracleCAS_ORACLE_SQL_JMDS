@@ -104,7 +104,7 @@ rollback;
 --check option= impide que una vista quede inútil
 --ejemplo
 
---creaos laa vista V_vendedores
+--creamos laa vista V_vendedores
 /
 create or replace view v_vendedores
 as
