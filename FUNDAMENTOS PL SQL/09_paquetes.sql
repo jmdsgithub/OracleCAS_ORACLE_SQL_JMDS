@@ -12,25 +12,19 @@ end pk_ejemplo;
 /
 
 --body
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+create or replace package body pk_ejemplo
+as
+    --en el header solamente se incluyen las declaraciones
+    procedure mostrarmensaje
+    as
+    begin 
+        dbms_output.put_line('Soy un paquete');
+    end;
+end pk_ejemplo;
+--llamada
+begin
+    PK_EJEMPLO.MOSTRARMENSAJE;
+end;
 
 --vamos a crear un paquete que contenga acciones de eliminar
 --
@@ -333,4 +327,97 @@ update doctor set salario = salario + dbms_random.value(1,50);
 select dbms_random.value(1,50) from dual;
 select round(dbms_random.value(1,50)) from dual;
 
+--header
+/
+create or replace package pk_doctores
+as
+    procedure incremento_random_doctores;
+    function function_random_doctores(p_iddoctor DOCTOR.DOCTOR_NO%TYPE)
+    return NUMBER;
+end pk_doctores;
+/
+--body
+/
+create or replace package body pk_doctores
+as
+    procedure incremento_random_doctores
+    as
+        cursor c_doctores is
+        select DOCTOR_NO, APELLIDO, SALARIO from DOCTOR;
+        v_random number;
+    begin
+        for v_doc in c_doctores
+        loop
+            v_random := function_random_doctores(v_doc.DOCTOR_NO);
+            update DOCTOR set SALARIO = SALARIO + v_random
+            where DOCTOR_NO=v_doc.DOCTOR_NO;
+            dbms_output.put_line('Doctor ' || v_doc.APELLIDO 
+            || ' tiene un incremento de ' || v_random);
+        end loop;
+    end;
+    function function_random_doctores(p_iddoctor DOCTOR.DOCTOR_NO%TYPE)
+    return NUMBER
+    as
+        v_salario DOCTOR.SALARIO%TYPE;  
+        v_random NUMBER;
+    begin
+        select SALARIO into v_salario from DOCTOR
+        where DOCTOR_NO=p_iddoctor;
+        if (v_salario < 200000) then
+            v_random := trunc(dbms_random.value(1,500));
+        elsif (v_salario > 300000) then
+            v_random := trunc(dbms_random.value(1, 50));
+        else 
+            v_random := trunc(dbms_random.value(1, 300));
+        end if;
+        return v_random;    
+    end;
+end pk_doctores;
+/
 
+/
+declare
+    cursor c_doctores is
+    select DOCTOR_NO, APELLIDO, SALARIO from DOCTOR;
+    v_random number;
+begin
+    for v_doc in c_doctores
+    loop
+        v_random := random_doctor(v_doc.DOCTOR_NO);
+        update DOCTOR set SALARIO = SALARIO + v_random
+        where DOCTOR_NO=v_doc.DOCTOR_NO;
+        dbms_output.put_line('Doctor ' || v_doc.APELLIDO 
+        || ' tiene un incremento de ' || v_random);
+    end loop;
+end;
+/
+
+
+/
+create or replace function random_doctor
+(p_iddoctor DOCTOR.DOCTOR_NO%TYPE)
+return number
+as
+    v_salario DOCTOR.SALARIO%TYPE;  
+    v_random NUMBER;
+begin
+    select SALARIO into v_salario from DOCTOR
+    where DOCTOR_NO=p_iddoctor;
+    if (v_salario < 200000) then
+        v_random := trunc(dbms_random.value(1,500));
+    elsif (v_salario > 300000) then
+        v_random := trunc(dbms_random.value(1, 50));
+    else 
+        v_random := trunc(dbms_random.value(1, 300));
+    end if;
+    return v_random;
+end;
+/
+--386 -> 500
+--522 -> 50
+select PK_DOCTORES.FUNCTION_RANDOM_DOCTORES(386) as incremento from DUAL;
+select random_doctor(522) as incremento from DUAL;
+select * from DOCTOR;
+update doctor set salario = salario + dbms_random.value(1,50);
+select trunc(dbms_random.value(1,50)) as aleatorio from DUAL;
+select * from DOCTOR;
